@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const app = express();
 const userRouter = require('./routes/userRoutes');
 const loggerMiddleware = require('./middleware/loggerMiddleware');
+const taskRoutes = require('./routes/taskRoutes')
+c
 require('dotenv').config();
 
 
@@ -13,6 +15,8 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(loggerMiddleware)
 app.use('/api', userRouter);
+
+app.use('/api',taskRoutes);
 mongoose.connect(process.env.MONGODB_URL)
     .then(() => console.log('Connected to MongoDB'))
     .catch((err) => console.error('Failed to connect to MongoDB', err));
