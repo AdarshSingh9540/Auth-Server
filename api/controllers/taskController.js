@@ -1,24 +1,41 @@
-const Task = require('../Models/taskModel');
+const PersonalTask = require('../Models/personalTaskModel'); 
+const OrganizationalTask = require('../Models/organizationalTaskModel');
 
-const createTask = async(req,res)=>{
-    try{
+const createTask = async (req, res) => {
+    try {
         const userId = req.user.id;
 
-        const { status, priority, assignees, dueDate, moreProperty, aboutTask } = req.body;
-        if (!status || !priority || !assignees || !dueDate) {
+        const { status, priority, assignees, dueDate, moreProperty, aboutTask, spaceType } = req.body;
+        if (!status || !priority || !assignees || !dueDate || !spaceType) {
             return res.status(400).json({
                 error: 'All required fields must be provided',
             });
         }
 
-        const newTask = new Task({
-            status,
-            priority,
-            assignees,
-            dueDate,
-            moreProperty,
-            aboutTask,
-        })
+        let newTask;
+        if (spaceType === "Personal") {
+            newTask = new PersonalTask({
+                status,
+                priority,
+                assignees,
+                dueDate,
+                moreProperty,
+                aboutTask,
+            });
+        } else if (spaceType === "Organizational") {
+            newTask = new OrganizationalTask({
+                status,
+                priority,
+                assignees,
+                dueDate,
+                moreProperty,
+                aboutTask,
+            });
+        } else {
+            return res.status(400).json({
+                error: 'Invalid spaceType',
+            });
+        }
 
         await newTask.save();
 
@@ -26,33 +43,14 @@ const createTask = async(req,res)=>{
             message: 'Task created successfully',
             task: newTask,
         });
-        console.log(newTask);
-    }catch(error){
-        console.log(error);
-        res.status(500).json({
-            error: 'Internal server error',
-        });
-
-    }
-}
-
-const getTasks = async (req, res) => {
-    try {
-        const userId = req.user.id; 
-        const tasks = await Task.find(); 
-        res.status(200).json({
-            message: 'Tasks retrieved successfully',
-            tasks: tasks,
-        });
     } catch (error) {
-        console.error(error);
+        console.log(error);
         res.status(500).json({
             error: 'Internal server error',
         });
     }
 };
 
-module.exports={
+module.exports = {
     createTask,
-    getTasks
-}
+};

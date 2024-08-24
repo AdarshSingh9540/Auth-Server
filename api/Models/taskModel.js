@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-const { type } = require('os')
 
 const taskSchema = new mongoose.Schema({
     status:{
@@ -24,7 +23,12 @@ const taskSchema = new mongoose.Schema({
       Type:String,
     
     },
-    aboutTask:String
+    aboutTask:String,
+    spaceType: {  
+      type: String,
+      required: true,
+      enum: ["Personal", "Organizational"]
+  }
 })
 
 const Task = mongoose.model('Task',taskSchema);
